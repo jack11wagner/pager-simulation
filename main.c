@@ -2,6 +2,8 @@
 // Main Function //
 ///////////////////
 
+// Compile: gcc -Wall main.c pager.c fifo.c sc.c lru.c file_data.c -o pager
+
 #include "general.h"
 #include "pager.h"
 #include "fifo.h"

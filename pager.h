@@ -9,7 +9,7 @@
 
 #include <stdbool.h>
 
-// Access bit-masks for reading, writing, and executing priviledges
+// Access bit-masks for reading, writing, and executing privileges
 #define READ        0x01
 #define WRITE       0x02
 #define EXECUTE     0x04
@@ -24,7 +24,11 @@
 #define VALID_PAGE	  0
 #define PAGE_FAULT 	  1
 
+// Constant for empty head/next_frame
+#define EMPTY (uint64) -1
+
 // Each frame needs to know which process/page is currently resident in it
+// next_frame is the frame after the current frame in the FIFO queue
 typedef struct _frame
 {
 	bool occupied; // false if free, true otherwise
@@ -39,9 +43,10 @@ typedef struct _frame
 // your code you can access the fields and it will automatically bit-shift and mask the data.
 typedef struct _page_table_entry
 {
-	uint64 flags : 12; // lowest 12 bits are for flags
-	uint64 frame : 40; // next 40 bits are for 
-	uint64 unused : 12; // TODO: last 12 bits are unused for now, you may use them for use with the paging algorithm(s)
+	uint64 flags  : 12; // Lowest 12 bits are for flags
+	uint64 frame  : 40; // The next 40 bits are for the frame
+	uint64 valid  : 1;  // The 53rd bit is for whether or not the page table is valid, i.e., whether or not the page table exists
+	uint64 unused : 11; // TODO: last 11 bits are unused for now, you may use them for use with the paging algorithm(s)
 } page_table_entry;
 
 // Structure for common fields used by all pagers
@@ -56,13 +61,19 @@ typedef struct _pager_data
 	frame* frames; // array to lookup pid/page number resident in each frame
 
 	// The page tables, a 2D array of pages indexed by process number then by the page number.
-	page** page_tables;
+	page_table_entry** page_tables;
 
-	// TODO: may need to add additional fields here for use with the paging algorithm(s) and/or statistics
+	// Page fault statistics
+	uint64 memory_reference_count, pf_total, pf_discarded_frames, pf_written_frames;
+
+	// Next victim of FIFO queue
+	uint64 FIFO_victim;
+
+	// TODO: may need to add additional fields here for use with the paging algorithm(s)
 } pager_data;
 
 // Utility function to get the page currently resident in a frame
-inline page_table_entry* get_page_from_frame(pager_data* pager, uint64 f)
+static inline page_table_entry* get_page_from_frame(pager_data* pager, uint64 f)
 {
 	frame* frm = &pager->frames[f];
 	return &pager->page_tables[frm->pid][frm->page_number];
