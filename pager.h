@@ -14,7 +14,8 @@
 #define WRITE       0x02
 #define EXECUTE     0x04
 
-// Additional flags used for pages (in addition READ, WRITE, and EXECUTE)
+// Additional flags used for pages (in addition to READ, WRITE, and EXECUTE)
+#define ALLOCATED  	0x08
 #define DIRTY   	0x10
 #define VALID   	0x20
 #define REFERENCED  0x40
@@ -45,8 +46,7 @@ typedef struct _page_table_entry
 {
 	uint64 flags  : 12; // Lowest 12 bits are for flags
 	uint64 frame  : 40; // The next 40 bits are for the frame
-	uint64 valid  : 1;  // The 53rd bit is for whether or not the page table is valid, i.e., whether or not the page table exists
-	uint64 unused : 11; // TODO: last 11 bits are unused for now, you may use them for use with the paging algorithm(s)
+	uint64 unused : 12; // TODO: last 12 bits are unused for now, you may use them for use with the paging algorithm(s)
 } page_table_entry;
 
 // Structure for common fields used by all pagers
@@ -68,8 +68,6 @@ typedef struct _pager_data
 
 	// Next victim of FIFO queue
 	uint64 FIFO_victim;
-
-	// TODO: may need to add additional fields here for use with the paging algorithm(s)
 } pager_data;
 
 // Utility function to get the page currently resident in a frame

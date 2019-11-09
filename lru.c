@@ -15,6 +15,6 @@ uint64 lru_select_victim_frame(pager_data* pager)
 	// TODO
 
 	// Select the first empty frame available, if any
-	for (int i = 0; i < pager->num_frames; i++) { if (!pager->frames[i].occupied) { return i; } }
+	if (pager->num_free_frames > 0) { return pager->num_frames - pager->num_free_frames; }
 	return 0;
 }
