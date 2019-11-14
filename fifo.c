@@ -11,6 +11,6 @@
 // use based on the FIFO algorithm. It returns the frame number of the selected frame but does not
 // update any pager data.
 uint64 fifo_select_victim_frame(pager_data* pager) {
-	// Return the victim
+	// Select the next victim by selecting the next frame
 	return (pager->FIFO_victim = (pager->FIFO_victim + 1) % pager->num_frames);
 }
