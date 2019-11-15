@@ -158,6 +158,11 @@ int check_log_addr(pager_data* pager, uint64 pid, uint64 logical_addr, byte acce
 	// Update flags and reference count. Return valid page.
 	if (entry.flags & ALLOCATED) {
 		update_flags_and_count(pager, access, pid, page_number);
+
+		// The memory reference count increases during page faults and therefore will always
+		// give a strict ordering to the frames for the LRU victim selection algorithm.
+		uint64 f = pager->page_tables[pid][page_number].frame; // Frame number
+		pager->frames[f].LRU_value = pager->memory_reference_count;
 		return VALID_PAGE;
 	}
 
@@ -188,6 +193,10 @@ void claim_frame(pager_data* pager, uint64 pid, uint64 logical_addr, uint64 f)
 			pager->pf_discarded_frames++;
 		}
 		evicted_page->flags ^= VALID;
+		
+		// The memory reference count increases during page faults and therefore will always
+		// give a strict ordering to the frames for the LRU victim selection algorithm.
+		pager->frames[f].LRU_value = pager->memory_reference_count;
 	} else { pager->num_free_frames--; }
 
 	printf("Page %lu of process %lu was paged into frame %lu\n", page_number, pid, f);

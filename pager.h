@@ -33,8 +33,7 @@
 typedef struct _frame
 {
 	bool occupied; // false if free, true otherwise
-	uint64 pid, page_number;
-	// TODO: may need to add additional fields here for use with the paging algorithm(s)
+	uint64 pid, page_number, LRU_value; // The LRU_value is used by the LRU algorithm to choose a victim frame
 } frame;
 
 // Each page needs to have a set of flags (some combination of VALID, DIRTY, REFERENCED, READ,
@@ -46,7 +45,7 @@ typedef struct _page_table_entry
 {
 	uint64 flags  : 12; // Lowest 12 bits are for flags
 	uint64 frame  : 40; // The next 40 bits are for the frame
-	uint64 unused : 12; // TODO: last 12 bits are unused for now, you may use them for use with the paging algorithm(s)
+	uint64 unused : 12; // Last 12 bits are unused for now, you may use them for use with the paging algorithm(s)
 } page_table_entry;
 
 // Structure for common fields used by all pagers

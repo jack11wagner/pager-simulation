@@ -12,9 +12,18 @@
 // update any pager data.
 uint64 lru_select_victim_frame(pager_data* pager)
 {
-	// TODO
-
 	// Select the first empty frame available, if any
 	if (pager->num_free_frames > 0) { return pager->num_frames - pager->num_free_frames; }
-	return 0;
+
+	// Find and select the least recently used frame
+	uint64 min_value = pager->frames[0].LRU_value;
+	uint64 selected_frame = 0;
+	for (int i = 1; i < pager->num_frames; i++) {
+		if (pager->frames[i].LRU_value < min_value) {
+			min_value = pager->frames[i].LRU_value;
+			selected_frame = i;
+		}
+	}
+	
+	return selected_frame;
 }

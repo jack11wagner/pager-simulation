@@ -12,9 +12,8 @@
 // update any pager data.
 uint64 sc_select_victim_frame(pager_data* pager)
 {
-	// TODO
-
 	// Select the first empty frame available, if any
 	if (pager->num_free_frames > 0) { return pager->num_frames - pager->num_free_frames; }
+	
 	return 0;
 }
