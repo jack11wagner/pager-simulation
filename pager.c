@@ -134,7 +134,7 @@ int check_log_addr(pager_data* pager, uint64 pid, uint64 logical_addr, byte acce
 	page_table_entry entry = pager->page_tables[pid][page_number];
 
 	// Check if page is allocated
-	if (!(entry.flags & VALID) && !(entry.flags & ALLOCATED)) {
+	if (!(entry.flags & ALLOCATED)) {
 		// Attempted to access unallocated page
 		printf("Process %lu attempted to access page %lu which has not been allocated\n", pid, page_number);
 		return INVALID_PAGE;
@@ -147,7 +147,7 @@ int check_log_addr(pager_data* pager, uint64 pid, uint64 logical_addr, byte acce
 	}
 
 	// Check if not VALID (not memory resident)
-	if (!(entry.flags & VALID) && entry.flags & ALLOCATED) {
+	if (!(entry.flags & VALID)) {
 		// If the page table entry is allocated, then increment both memory reference count and
 		// page fault total. Finally, return a page fault.
 		pager->pf_total++;
@@ -157,19 +157,13 @@ int check_log_addr(pager_data* pager, uint64 pid, uint64 logical_addr, byte acce
 
 	// Otherwise, the page is memory resident and allocated.
 	// Update flags and reference count. Return valid page.
-	if (entry.flags & ALLOCATED) {
-		update_flags_and_count(pager, access, pid, page_number);
+	update_flags_and_count(pager, access, pid, page_number);
 
-		// The memory reference count increases during page faults and therefore will always
-		// give a strict ordering to the frames for the LRU victim selection algorithm.
-		uint64 f = pager->page_tables[pid][page_number].frame; // Frame number
-		pager->frames[f].LRU_value = pager->memory_reference_count;
-		return VALID_PAGE;
-	}
-
-	// This is the case where the page is memory resident, but not allocated.
-	// This should never happen, but is included for completeness.
-	return INVALID_PAGE;
+	// The memory reference count increases during page faults and therefore will always
+	// give a strict ordering to the frames for the LRU victim selection algorithm.
+	uint64 f = pager->page_tables[pid][page_number].frame; // Frame number
+	pager->frames[f].LRU_value = pager->memory_reference_count;
+	return VALID_PAGE;
 }
 
 // Have page page_number of process pid claim the frame f. If the frame is not free, then its contents are
