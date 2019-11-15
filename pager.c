@@ -193,7 +193,7 @@ void claim_frame(pager_data* pager, uint64 pid, uint64 logical_addr, uint64 f)
 			printf("It has not been modified so it will be discarded\n");
 			pager->pf_discarded_frames++;
 		}
-		evicted_page->flags ^= VALID;
+		evicted_page->flags &= ~(VALID | REFERENCED | DIRTY);
 		
 		// The memory reference count increases during page faults and therefore will always
 		// give a strict ordering to the frames for the LRU victim selection algorithm.
