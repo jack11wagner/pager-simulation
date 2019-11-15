@@ -14,6 +14,17 @@ uint64 sc_select_victim_frame(pager_data* pager)
 {
 	// Select the first empty frame available, if any
 	if (pager->num_free_frames > 0) { return pager->num_frames - pager->num_free_frames; }
-	
-	return 0;
+
+	// Loop through the pages in the frames and select the first frame whose page has a 
+	// REFERENCED bit of 0.
+	uint64 frame_number = pager->SC_head_frame;
+	page_table_entry* page = get_page_from_frame(pager, frame_number);
+	while (page->flags & REFERENCED) {
+		// Set REFERENCED bit to zero
+		page->flags ^= REFERENCED;
+		// Update head of queue
+		frame_number = (frame_number + 1) % pager->num_frames;
+		page = get_page_from_frame(pager, frame_number);
+	}
+	return (pager->SC_head_frame = frame_number);
 }

@@ -20,7 +20,8 @@ pager_data* pager_data_init(uint64 log_mem_sz, uint64 phy_mem_sz, uint64 page_sz
 	memset(pager, 0, sizeof(pager_data));
 	
 	// Basic settings
-	pager->FIFO_victim = phy_mem_sz - 1;
+	pager->FIFO_victim = -1;
+	pager->SC_head_frame = 0;
 	pager->memory_reference_count = pager->pf_total = 0;
 	pager->pf_discarded_frames = pager->pf_written_frames = 0;
 	pager->num_pages = log_mem_sz;

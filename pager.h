@@ -67,6 +67,11 @@ typedef struct _pager_data
 
 	// Next victim of FIFO queue
 	uint64 FIFO_victim;
+
+	// Frame that contains the head of the queue of pages that are in memory for SC.
+	// We can get the page from the frame.
+	uint64 SC_head_frame;
+
 } pager_data;
 
 // Utility function to get the page currently resident in a frame
