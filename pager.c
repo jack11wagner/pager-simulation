@@ -133,6 +133,13 @@ int check_log_addr(pager_data* pager, uint64 pid, uint64 logical_addr, byte acce
 	uint64 page_number = logical_addr >> pager->page_sz;
 	page_table_entry entry = pager->page_tables[pid][page_number];
 
+	// Check if page is allocated
+	if (!(entry.flags & VALID) && !(entry.flags & ALLOCATED)) {
+		// Attempted to access unallocated page
+		printf("Process %lu attempted to access page %lu which has not been allocated\n", pid, page_number);
+		return INVALID_PAGE;
+	}
+
 	// Process has incompatible privileges
 	if (!(entry.flags & access)) {
 		print_incompatible_privileges(entry, pid, page_number, access);
@@ -140,19 +147,12 @@ int check_log_addr(pager_data* pager, uint64 pid, uint64 logical_addr, byte acce
 	}
 
 	// Check if not VALID (not memory resident)
-	if (!(entry.flags & VALID)) {
+	if (!(entry.flags & VALID) && entry.flags & ALLOCATED) {
 		// If the page table entry is allocated, then increment both memory reference count and
 		// page fault total. Finally, return a page fault.
-		if (entry.flags & ALLOCATED)
-		{
-			pager->pf_total++;
-			update_flags_and_count(pager, access, pid, page_number);
-			return PAGE_FAULT;
-		}
-
-		// Attempted to access unallocated page
-		printf("Process %lu attempted to access page %lu which has not been allocated\n", pid, page_number);
-		return INVALID_PAGE;
+		pager->pf_total++;
+		update_flags_and_count(pager, access, pid, page_number);
+		return PAGE_FAULT;
 	}
 
 	// Otherwise, the page is memory resident and allocated.
