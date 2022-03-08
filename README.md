@@ -10,4 +10,4 @@ The page replacement algorithms implemented in this project are:
 * FIFO 
 * SC (Second-Chance) 
 * LRU 
-* LIFO
+
