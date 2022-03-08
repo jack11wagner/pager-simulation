@@ -1,0 +1,35 @@
+Page 1 of process 0 was paged into frame 0
+Page 15 of process 0 was paged into frame 1
+Page 14 of process 0 was paged into frame 2
+Page 2 of process 0 was paged into frame 3
+Page 1 of process 0 is selected to be paged out of frame 0
+It has not been modified so it will be discarded
+Page 1 of process 1 was paged into frame 0
+Page 15 of process 0 is selected to be paged out of frame 1
+It has been modified so it will be written to the swap space
+Page 15 of process 1 was paged into frame 1
+Page 14 of process 0 is selected to be paged out of frame 2
+It has been modified so it will be written to the swap space
+Page 14 of process 1 was paged into frame 2
+Page 2 of process 0 is selected to be paged out of frame 3
+It has not been modified so it will be discarded
+Page 13 of process 1 was paged into frame 3
+Page 1 of process 1 is selected to be paged out of frame 0
+It has not been modified so it will be discarded
+Page 12 of process 1 was paged into frame 0
+Page 15 of process 1 is selected to be paged out of frame 1
+It has been modified so it will be written to the swap space
+Page 8 of process 1 was paged into frame 1
+Page 14 of process 1 is selected to be paged out of frame 2
+It has been modified so it will be written to the swap space
+Page 8 of process 0 was paged into frame 2
+Page 13 of process 1 is selected to be paged out of frame 3
+It has been modified so it will be written to the swap space
+Page 2 of process 0 was paged into frame 3
+Process 0 attempted to access page 0 which has not been allocated
+Process 0 attempted to write to page 8 but that page can only be read
+----------------------------------------
+Page Fault Rate: 0.631579
+Total Page Faults: 12
+Total Page Faults Evicting and Discarding a Frame: 3
+Total Page Faults Evicting and Writing a Frame: 5
